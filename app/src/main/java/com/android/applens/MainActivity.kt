@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.font.FontWeight
@@ -52,6 +53,8 @@ class MainActivity : ComponentActivity() {
                 var query by remember { mutableStateOf("") }
                 var selectedFilter by remember { mutableStateOf(SortOption.A_Z) }
                 var isDropdownOpen by remember { mutableStateOf(false) }
+                val focusManager = LocalFocusManager.current
+
 
                 LaunchedEffect(Unit) { viewModel.loadApps() }
 
@@ -120,9 +123,13 @@ class MainActivity : ComponentActivity() {
                                     Spacer(modifier = Modifier.width(8.dp))
 
                                     Box {
-                                        IconButton(onClick = { isDropdownOpen = !isDropdownOpen }) {
+                                        IconButton(onClick = {
+                                            isDropdownOpen = !isDropdownOpen
+                                            focusManager.clearFocus()
+                                        }) {
                                             Icon(Icons.Filled.Tune, contentDescription = "Sort", tint = Color.White)
                                         }
+
 
                                         DropdownMenu(
                                             expanded = isDropdownOpen,
@@ -134,6 +141,7 @@ class MainActivity : ComponentActivity() {
                                                 onClick = {
                                                     selectedFilter = SortOption.A_Z
                                                     isDropdownOpen = false
+                                                    focusManager.clearFocus()
                                                 }
                                             )
                                             DropdownMenuItem(
@@ -141,6 +149,7 @@ class MainActivity : ComponentActivity() {
                                                 onClick = {
                                                     selectedFilter = SortOption.Z_A
                                                     isDropdownOpen = false
+                                                    focusManager.clearFocus()
                                                 }
                                             )
                                             DropdownMenuItem(
@@ -148,6 +157,7 @@ class MainActivity : ComponentActivity() {
                                                 onClick = {
                                                     selectedFilter = SortOption.MostRecentlyUsed
                                                     isDropdownOpen = false
+                                                    focusManager.clearFocus()
                                                 }
                                             )
                                             DropdownMenuItem(
@@ -155,6 +165,7 @@ class MainActivity : ComponentActivity() {
                                                 onClick = {
                                                     selectedFilter = SortOption.LeastRecentlyUsed
                                                     isDropdownOpen = false
+                                                    focusManager.clearFocus()
                                                 }
                                             )
                                         }
