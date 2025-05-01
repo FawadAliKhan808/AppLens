@@ -1,6 +1,6 @@
 package com.android.applens.model
 
-import android.graphics.drawable.Drawable
+import android.graphics.Bitmap
 import android.os.Parcelable
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
@@ -13,5 +13,5 @@ data class AppInfo(
     val versionName: String
 ) : Parcelable {
     @IgnoredOnParcel
-    var icon: Drawable? = null
+    var iconBitmap: Bitmap? = null
 }

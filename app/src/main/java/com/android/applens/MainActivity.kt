@@ -189,15 +189,19 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppRow(app: AppInfo) {
     val context = LocalContext.current
-    val bitmap = remember(app.packageName) {
-        app.icon?.let { drawableToBitmap(it) }
-            ?: ContextCompat.getDrawable(context, R.drawable.ic_default_app)?.let { drawableToBitmap(it) }
+
+    val lastUsedText by remember(app.lastUsedTime) {
+        mutableStateOf(
+            if (app.lastUsedTime == 0L)
+                "A long time ago"
+            else
+                SimpleDateFormat("dd MMM, hh:mm a", Locale.getDefault()).format(Date(app.lastUsedTime))
+        )
     }
 
-    val lastUsed = if (app.lastUsedTime == 0L) "A long time ago"
-    else SimpleDateFormat("dd MMM, hh:mm a", Locale.getDefault()).format(Date(app.lastUsedTime))
-
-    val unused = System.currentTimeMillis() - app.lastUsedTime > 7 * 24 * 60 * 60 * 1000L
+    val unused = remember(app.lastUsedTime) {
+        System.currentTimeMillis() - app.lastUsedTime > 7 * 24 * 60 * 60 * 1000L
+    }
 
     fun uninstallApp(packageName: String) {
         val intent = Intent(Intent.ACTION_UNINSTALL_PACKAGE).apply {
@@ -222,7 +226,7 @@ fun AppRow(app: AppInfo) {
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        bitmap?.let {
+        app.iconBitmap?.let {
             Image(
                 bitmap = it.asImageBitmap(),
                 contentDescription = app.appName,
@@ -242,7 +246,7 @@ fun AppRow(app: AppInfo) {
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "Last used: $lastUsed",
+                text = "Last used: $lastUsedText",
                 style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
                 color = Color.Gray
             )
@@ -274,6 +278,7 @@ fun AppRow(app: AppInfo) {
         }
     }
 }
+
 
 enum class SortOption {
     A_Z, Z_A, MostRecentlyUsed, LeastRecentlyUsed

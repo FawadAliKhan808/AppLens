@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import com.android.applens.model.AppInfo
 import com.android.applens.R
+import com.android.applens.utils.drawableToBitmap
 import java.util.concurrent.TimeUnit
 
 class AppRepository(private val context: Context) {
@@ -37,11 +38,13 @@ class AppRepository(private val context: Context) {
                     "N/A"
                 }
 
-                val icon = try {
+                val iconDrawable = try {
                     pm.getApplicationIcon(it)
                 } catch (e: Exception) {
                     ContextCompat.getDrawable(context, R.drawable.ic_default_app)
                 }
+
+                val iconBitmap = iconDrawable?.let { drawableToBitmap(it) }
 
                 AppInfo(
                     appName = pm.getApplicationLabel(it).toString(),
@@ -49,12 +52,11 @@ class AppRepository(private val context: Context) {
                     lastUsedTime = lastUsed,
                     versionName = versionName
                 ).also { info ->
-                    info.icon = icon
+                    info.iconBitmap = iconBitmap
                 }
             }
             .sortedBy { it.appName.lowercase() }
     }
-
 
     private fun getLastModifiedTime(packageName: String): Long {
         return try {

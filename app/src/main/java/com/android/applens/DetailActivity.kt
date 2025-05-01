@@ -50,12 +50,12 @@ class DetailActivity : ComponentActivity() {
 fun AppDetailScreen(app: AppInfo, onBack: () -> Unit) {
     val context = LocalContext.current
     val bitmap = remember(app.packageName) {
-        try {
-            val icon = context.packageManager.getApplicationIcon(app.packageName)
-            drawableToBitmap(icon)
+        val iconDrawable = try {
+            context.packageManager.getApplicationIcon(app.packageName)
         } catch (e: Exception) {
-            drawableToBitmap(ContextCompat.getDrawable(context, R.drawable.ic_default_app)!!)
+            ContextCompat.getDrawable(context, R.drawable.ic_default_app)
         }
+        drawableToBitmap(iconDrawable!!)
     }
 
     Box(
